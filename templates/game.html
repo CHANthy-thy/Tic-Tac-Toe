@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic Tac Toe</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v={{ time }}">
+
+</head>
+<body>
+  <header>
+    <img src="{{ url_for('static', filename='Images/cambodia.jpg') }}" alt="Country Flag" class="country-img">
+    <h1 class="neon-text">Tic Tac Toe</h1>
+    <img src="{{ url_for('static', filename='Images/pnc.jpg') }}" alt="School Logo" class="school-logo">
+  </header>
+
+<label for="level">Choose difficulty, or Admin XD!:</label>
+<select id="level">
+  <option value="easy">Easy</option>
+  <option value="medium">Medium</option>
+  <option value="hard">Hard</option>
+  <option value="admin">Admin</option>
+</select>
+
+<!-- Hidden Admin info card -->
+<div id="admin-info" style="display:none; margin-top: 20px; color: #0ff; font-family: 'Orbitron', sans-serif; text-align: left; max-width: 600px; margin-left: auto; margin-right: auto;">
+  <div style="display: flex; align-items: center; gap: 20px; border: 2px solid #0ff; padding: 15px; border-radius: 15px; box-shadow: 0 0 10px #0ff;">
+    
+    <img src="{{ url_for('static', filename='Images/admin.jpg') }}" alt="Admin Photo" 
+         style="width: 150px; border-radius: 15px; border: 2px solid #0ff; box-shadow: 0 0 10px #0ff;">
+    
+    <div>
+      <h2 style="margin-top: 0; margin-bottom: 10px;">Admin Name: iThychan</h2>
+      <p>Phone: +855 866 632 72</p>
+      <p>Email: cthy4313@gmail.com</p>
+      <p>Role: Super Admin</p>
+      <p>About Admin: Admin GenZ smoa s'nea</p>
+      <p>Position: QA Tester, but test your heard!</p>
+    </div>
+
+  </div>
+</div>
+
+
+<div id="game-area">
+  <div class="board">
+    <div class="cell" id="cell0"></div>
+    <div class="cell" id="cell1"></div>
+    <div class="cell" id="cell2"></div>
+    <div class="cell" id="cell3"></div>
+    <div class="cell" id="cell4"></div>
+    <div class="cell" id="cell5"></div>
+    <div class="cell" id="cell6"></div>
+    <div class="cell" id="cell7"></div>
+    <div class="cell" id="cell8"></div>
+  </div>
+  <button id="reset">Reset</button>
+</div>
+
+
+  <script src="{{ url_for('static', filename='js/game.js') }}"></script>
+
+
+
+</body>
+</html>

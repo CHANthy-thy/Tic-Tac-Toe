@@ -1,0 +1,167 @@
+/* === General Page Styling === */
+body {
+  font-family: 'Poppins', sans-serif;
+  background: radial-gradient(circle at top, #111, #000);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  margin: 0;
+  padding: 20px;
+}
+
+/* === Header Section === */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 700px;
+  margin-bottom: 30px;
+}
+
+.country-img, .school-logo {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}
+
+.neon-text {
+  font-size: 3rem;
+  text-transform: uppercase;
+  color: #0ff;
+  text-shadow:
+    0 0 5px #0ff,
+    0 0 10px #0ff,
+    0 0 20px #00ffff,
+    0 0 40px #00ffff;
+  margin: 0;
+}
+
+/* === Difficulty Selector === */
+label {
+  font-size: 1.2rem;
+  margin-bottom: 8px;
+}
+
+#level {
+  padding: 8px 12px;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 2px solid #0ff;
+  background: transparent;
+  color: #0ff;
+  outline: none;
+  margin-bottom: 20px;
+}
+
+#level option {
+  background-color: #000;
+  color: #0ff;
+}
+
+/* === Admin Info Section === */
+#admin-info {
+  display: none;
+  margin-top: 20px;
+  max-width: 600px;
+  color: #0ff;
+  font-family: 'Poppins', sans-serif;
+  text-align: left;
+}
+#admin-info.show {
+  display: flex;
+  animation: slideDown 0.5s ease forwards;
+}
+
+@keyframes slideDown {
+  0% { opacity: 0; transform: translateY(-20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+
+.admin-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border: 2px solid #0ff;
+  padding: 15px;
+  border-radius: 15px;
+  box-shadow: 0 0 10px #0ff;
+  background: rgba(0, 255, 255, 0.05);
+}
+
+.admin-img {
+  width: 150px;
+  border-radius: 15px;
+  border: 2px solid #0ff;
+  box-shadow: 0 0 10px #0ff;
+}
+
+.admin-details h2 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #0ff;
+}
+
+/* === Tic Tac Toe Board === */
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 120px);
+  grid-template-rows: repeat(3, 120px);
+  gap: 8px;
+  margin-bottom: 25px;
+}
+
+.cell {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 2px solid #0ff;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  color: #0ff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 10px #0ff;
+}
+
+.cell:hover {
+  transform: scale(1.05);
+  background-color: rgba(0, 255, 255, 0.1);
+  box-shadow: 0 0 20px #0ff;
+}
+
+.cell.win {
+  background-color: #0ff;
+  color: #000;
+  box-shadow: 0 0 30px #0ff, 0 0 60px #0ff;
+  animation: blink 0.6s infinite alternate;
+}
+
+@keyframes blink {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.1); }
+}
+
+/* === Reset Button === */
+#reset {
+  background-color: transparent;
+  border: 2px solid #f0f;
+  color: #f0f;
+  padding: 10px 25px;
+  font-size: 1.2rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-shadow: 0 0 10px #f0f;
+}
+
+#reset:hover {
+  background-color: #f0f;
+  color: #000;
+  box-shadow: 0 0 20px #f0f;
+}
