@@ -1,156 +1,177 @@
-// Get elements
-const cells = document.querySelectorAll('.cell');
-const levelSelect = document.getElementById('level');
-const resetBtn = document.getElementById('reset');
-const adminInfo = document.getElementById('admin-info');
-const gameArea = document.getElementById('game-area');
+const menu = document.getElementById("menu");
+const gameArea = document.getElementById("game-area");
+const adminInfo = document.getElementById("admin-info");
+const board = document.querySelector(".board");
+const result = document.getElementById("result");
+const startBtn = document.getElementById("start");
+const resetBtn = document.getElementById("reset");
+const backBtn = document.getElementById("back");
 
-// Game variables
-let board = Array(9).fill('');
-let player = 'X';
-let ai = 'O';
+let playMode = "ai";
+let gameType = "classic";
+let level = "easy";
+let gameActive = false;
+let currentPlayer = "X";
+let boardState = [];
 
-// Winning combinations
-function checkWin(b, symbol) {
-  const wins = [
-    [0,1,2],[3,4,5],[6,7,8],
-    [0,3,6],[1,4,7],[2,5,8],
-    [0,4,8],[2,4,6]
-  ];
-  return wins.some(w => w.every(i => b[i] === symbol));
+// Create the board dynamically
+function createBoard(size) {
+  board.innerHTML = "";
+  board.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+  board.style.gridTemplateRows = `repeat(${size}, 1fr)`;
+  boardState = new Array(size * size).fill("");
+
+  for (let i = 0; i < size * size; i++) {
+    const cell = document.createElement("div");
+    cell.classList.add("cell");
+    cell.style.border = "1px solid #007bff";
+    cell.style.borderRadius = "6px";
+    cell.style.height = "60px";
+    cell.style.display = "flex";
+    cell.style.alignItems = "center";
+    cell.style.justifyContent = "center";
+    cell.style.fontSize = "2rem";
+    cell.style.cursor = "pointer";
+    cell.dataset.index = i;
+
+    cell.addEventListener("click", () => {
+      if (!gameActive || boardState[i] !== "") return;
+
+      boardState[i] = currentPlayer;
+      cell.textContent = currentPlayer;
+
+      if (checkWin()) {
+        gameActive = false;
+        result.textContent = `${currentPlayer} Wins!`;
+        return;
+      } else if (boardState.every(cell => cell !== "")) {
+        gameActive = false;
+        result.textContent = "It's a Draw!";
+        return;
+      }
+
+      currentPlayer = currentPlayer === "X" ? "O" : "X";
+
+      if (playMode === "ai" && currentPlayer === "O" && gameActive) {
+        aiMove();
+      }
+    });
+
+    board.appendChild(cell);
+  }
 }
 
-// Minimax for hard level
-function minimax(newBoard, playerSymbol) {
-  const availSpots = newBoard.map((v, i) => v === '' ? i : null).filter(v => v !== null);
-
-  if (checkWin(newBoard, player)) return {score: -10};
-  else if (checkWin(newBoard, ai)) return {score: 10};
-  else if (availSpots.length === 0) return {score: 0};
-
-  const moves = [];
-
-  for (let i = 0; i < availSpots.length; i++) {
-    const move = {};
-    move.index = availSpots[i];
-    newBoard[availSpots[i]] = playerSymbol;
-
-    if (playerSymbol === ai) {
-      const result = minimax(newBoard, player);
-      move.score = result.score;
-    } else {
-      const result = minimax(newBoard, ai);
-      move.score = result.score;
-    }
-
-    newBoard[availSpots[i]] = '';
-    moves.push(move);
-  }
-
-  let bestMove;
-  if (playerSymbol === ai) {
-    let bestScore = -Infinity;
-    for (let i = 0; i < moves.length; i++) {
-      if (moves[i].score > bestScore) {
-        bestScore = moves[i].score;
-        bestMove = moves[i];
-      }
-    }
-  } else {
-    let bestScore = Infinity;
-    for (let i = 0; i < moves.length; i++) {
-      if (moves[i].score < bestScore) {
-        bestScore = moves[i].score;
-        bestMove = moves[i];
-      }
-    }
-  }
-
-  return bestMove;
-}
-
-// AI move
+// Simple AI Move for demo purposes (random move)
 function aiMove() {
-  const level = levelSelect.value;
-  let move;
+  let availableIndices = [];
+  boardState.forEach((val, idx) => {
+    if (val === "") availableIndices.push(idx);
+  });
 
-  if (level === 'easy') {
-    const empty = board.map((v,i) => v === '' ? i : null).filter(v => v !== null);
-    move = empty[Math.floor(Math.random() * empty.length)];
-  } 
-  else if (level === 'medium') {
-    // Try to win
-    for (let i = 0; i < 9; i++) {
-      if (board[i] === '') {
-        board[i] = ai;
-        if (checkWin(board, ai)) { move = i; board[i] = ''; break; }
-        board[i] = '';
-      }
-    }
-    // Try to block
-    if (move === undefined) {
-      for (let i = 0; i < 9; i++) {
-        if (board[i] === '') {
-          board[i] = player;
-          if (checkWin(board, player)) { move = i; board[i] = ''; break; }
-          board[i] = '';
-        }
-      }
-    }
-    // Random
-    if (move === undefined) { 
-      const empty = board.map((v,i) => v === '' ? i : null).filter(v => v !== null);
-      move = empty[Math.floor(Math.random() * empty.length)];
-    }
-  } 
-  else if (level === 'hard') {
-    move = minimax(board, ai).index;
-  }
+  if (availableIndices.length === 0) return;
 
-  board[move] = ai;
-  cells[move].textContent = ai;
+  const randomIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
+  boardState[randomIndex] = currentPlayer;
 
-  if (checkWin(board, ai)) { 
-    setTimeout(() => alert("AI Wins!"), 10); 
-  } else if (!board.includes('')) {
-    setTimeout(() => alert("Draw!"), 10);
+  const cell = board.querySelector(`[data-index="${randomIndex}"]`);
+  if (cell) cell.textContent = currentPlayer;
+
+  if (checkWin()) {
+    gameActive = false;
+    result.textContent = `${currentPlayer} Wins!`;
+  } else if (boardState.every(cell => cell !== "")) {
+    gameActive = false;
+    result.textContent = "It's a Draw!";
+  } else {
+    currentPlayer = currentPlayer === "X" ? "O" : "X";
   }
 }
 
-// Player clicks
-cells.forEach((cell, idx) => {
-  cell.addEventListener('click', () => {
-    if (board[idx] === '') {
-      board[idx] = player;
-      cell.textContent = player;
+function checkWin() {
+  const size = gameType === "classic" ? 3 : 4;
+  const lines = [];
 
-      if (checkWin(board, player)) { 
-        setTimeout(() => alert("You Win!"), 10);
-        return;
-      } else if (!board.includes('')) {
-        setTimeout(() => alert("Draw!"), 10);
-        return;
-      }
-
-      aiMove();
-    }
-  });
-});
-
-// ✅ Reset button working
-resetBtn.addEventListener('click', () => {
-  board = Array(9).fill('');
-  cells.forEach(cell => cell.textContent = '');
-  player = 'X';
-});
-
-// ✅ Level change (Admin mode toggle)
-levelSelect.addEventListener('change', function() {
-  if (this.value === 'admin') {
-    adminInfo.style.display = 'block';
-    gameArea.style.display = 'none';
-  } else {
-    adminInfo.style.display = 'none';
-    gameArea.style.display = 'block';
+  // Rows and columns
+  for (let i = 0; i < size; i++) {
+    lines.push([...Array(size).keys()].map(j => i * size + j)); // rows
+    lines.push([...Array(size).keys()].map(j => j * size + i)); // columns
   }
+
+  // Diagonals
+  lines.push([...Array(size).keys()].map(i => i * (size + 1)));
+  lines.push([...Array(size).keys()].map(i => (i + 1) * (size - 1)));
+
+  for (const line of lines) {
+    const [first, ...rest] = line;
+    if (
+      boardState[first] !== "" &&
+      rest.every(idx => boardState[idx] === boardState[first])
+    ) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+startBtn.addEventListener("click", () => {
+  playMode = document.getElementById("play-mode").value;
+  gameType = document.getElementById("game-type").value;
+  level = document.getElementById("level").value;
+
+  // Hide menu
+  menu.style.display = "none";
+
+  // --- ADMIN PAGE MODE ---
+  if (level === "admin") {
+    // Show only admin info
+    document.body.classList.add("admin-mode");
+    gameArea.style.display = "block";
+    adminInfo.style.display = "flex";
+    adminInfo.style.flexDirection = "column";
+    adminInfo.style.alignItems = "center";
+    adminInfo.style.justifyContent = "center";
+    adminInfo.style.textAlign = "center";
+
+    // Completely hide game elements
+    board.style.display = "none";
+    result.style.display = "none";
+    resetBtn.style.display = "none";
+    backBtn.style.display = "none";
+
+    // Clear the board if it was created before
+    board.innerHTML = "";
+
+    return; // stop here — don’t load the game
+  }
+
+  // --- NORMAL GAME MODE ---
+  document.body.classList.remove("admin-mode");
+  adminInfo.style.display = "none";
+  board.style.display = "grid";
+  result.style.display = "block";
+  resetBtn.style.display = "inline-block";
+  backBtn.style.display = "inline-block";
+
+  const size = gameType === "classic" ? 3 : 4;
+  createBoard(size);
+  gameActive = true;
+  currentPlayer = "X";
+  result.textContent = "";
+  gameArea.style.display = "block";
+});
+
+resetBtn.addEventListener("click", () => {
+  const size = gameType === "classic" ? 3 : 4;
+  createBoard(size);
+  gameActive = true;
+  currentPlayer = "X";
+  result.textContent = "";
+});
+
+backBtn.addEventListener("click", () => {
+  menu.style.display = "block";
+  gameArea.style.display = "none";
+  adminInfo.style.display = "none";
+  document.body.classList.remove("admin-mode");
 });

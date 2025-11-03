@@ -155,9 +155,9 @@ def admin_stats():
 
 # --- Game Route ---
 @app.route('/game')
-@login_required
 def game():
-    return render_template('game.html')  # this will be your Tic-Tac-Toe page
+    return render_template('game.html')
+
 
 # --- Run App ---
 if __name__ == '__main__':
